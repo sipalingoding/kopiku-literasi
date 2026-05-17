@@ -3,8 +3,25 @@ import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 
 export async function GET() {
-  const books = await prisma.book.findMany({ orderBy: { createdAt: 'asc' } });
-  return NextResponse.json(books);
+  const books = await prisma.book.findMany({
+    orderBy: { createdAt: 'asc' },
+    include: {
+      bookings: {
+        where: { status: 'active' },
+        select: { returnDate: true },
+        orderBy: { returnDate: 'asc' },
+        take: 1,
+      },
+    },
+  });
+
+  const result = books.map(({ bookings, ...book }) => ({
+    ...book,
+    isBooked: bookings.length > 0,
+    activeReturnDate: bookings[0]?.returnDate ?? null,
+  }));
+
+  return NextResponse.json(result);
 }
 
 export async function POST(req) {

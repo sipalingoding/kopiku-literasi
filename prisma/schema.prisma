@@ -41,6 +41,7 @@ model Booking {
   duration      Int
   durationLabel String
   note          String?
+  cancelReason  String?
   pickupDate    DateTime
   returnDate    DateTime
   status        String   @default("pending")

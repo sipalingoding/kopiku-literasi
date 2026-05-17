@@ -30,6 +30,7 @@ const ICON_PATHS = {
   chevronDown: <g><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></g>,
   arrowLeft: <g><path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/></g>,
   arrowRight: <g><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></g>,
+  mapPin: <g><path d="M12 2C8.7 2 6 4.7 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.3-2.7-6-6-6z" strokeLinejoin="round"/><circle cx="12" cy="8" r="2" fill="currentColor" stroke="none"/></g>,
   plus: <g><path d="M12 5v14M5 12h14" strokeLinecap="round"/></g>,
   edit: <g><path d="M14 4l6 6-11 11H3v-6L14 4z" strokeLinejoin="round"/><path d="M11 7l6 6" strokeLinecap="round"/></g>,
   trash: <g><path d="M4 7h16" strokeLinecap="round"/><path d="M10 4h4a1 1 0 011 1v2H9V5a1 1 0 011-1z" strokeLinejoin="round"/><path d="M6 7l1 13c0 .6.4 1 1 1h8c.6 0 1-.4 1-1l1-13" strokeLinejoin="round"/><path d="M10 11v6M14 11v6" strokeLinecap="round" opacity=".55"/></g>,

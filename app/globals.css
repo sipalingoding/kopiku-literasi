@@ -173,12 +173,16 @@ html.dark .nav-hamburger { color:var(--c-text); border-color:var(--c-border); }
 
 /* Auth */
 .kp-auth-card { background:#FFFDF7; border-radius:20px; padding:40px 36px; width:100%; max-width:460px; box-shadow:0 8px 40px rgba(58,26,10,0.12); border:1px solid #E0CEAD; }
+.kp-otp-row { display:flex; gap:10px; justify-content:center; margin-bottom:24px; }
+.kp-otp-input { width:52px; height:60px; text-align:center; font-size:28px; font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; border-radius:10px; border:2px solid #E0CEAD; background:#FFFDF7; color:#3A2212; outline:none; transition:border .2s; }
 
 /* Booking steps */
 .kp-booking-steps { display:flex; align-items:center; margin-bottom:36px; }
 .kp-booking-step-label { font-size:13px; font-weight:600; }
-.kp-booking-success { text-align:center; padding:56px; }
-.kp-booking-summary { display:inline-block; min-width:320px; }
+.kp-booking-success { text-align:center; padding:48px 40px; background:var(--c-card,#FFF); border-radius:16px; border:1px solid var(--c-border,#E0CEAD); box-shadow:0 2px 12px rgba(58,26,10,0.07); }
+.kp-booking-success h2 { font-size:28px; }
+.kp-booking-summary { width:100%; box-sizing:border-box; }
+.kp-booking-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
 
 @media (max-width: 768px) {
   /* Hero */
@@ -216,11 +220,16 @@ html.dark .nav-hamburger { color:var(--c-text); border-color:var(--c-border); }
 
   /* Auth */
   .kp-auth-card { padding:28px 20px; }
+  .kp-otp-row { gap:6px; }
+  .kp-otp-input { width:42px; height:50px; font-size:22px; border-radius:8px; }
 
   /* Booking steps — shrink label on very small */
   .kp-booking-step-label { font-size:11px; }
-  .kp-booking-success { padding:28px 16px; }
-  .kp-booking-summary { min-width:unset; width:100%; }
+  .kp-booking-success { padding:24px 16px; }
+  .kp-booking-success h2 { font-size:20px !important; }
+  .kp-booking-summary { min-width:unset; }
+  .kp-booking-btns { flex-direction:column; }
+  .kp-booking-btns button { width:100% !important; }
 }
 
 @media (max-width: 480px) {

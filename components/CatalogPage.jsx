@@ -1,7 +1,51 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Icon } from './Icons';
 import { BookCard, Stars, Badge, Btn } from './UI';
+
+const SORT_OPTS = [
+  { value: 'default', label: 'Urutan Default', icon: 'list' },
+  { value: 'rating',  label: 'Rating Tertinggi', icon: 'star' },
+];
+
+function SortDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const current = SORT_OPTS.find(o => o.value === value);
+
+  useEffect(() => {
+    function handleClick(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false); }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position:'relative', flexShrink:0 }}>
+      <button onClick={() => setOpen(o => !o)}
+        style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 16px', borderRadius:10, border:`1.5px solid ${open ? 'var(--c-accent,#C17A2A)' : 'var(--c-border,#E0CEAD)'}`, background:'var(--c-card,#FFF)', color:'var(--c-text,#3A2212)', fontSize:14, fontWeight:600, cursor:'pointer', transition:'border .2s', minWidth:180, justifyContent:'space-between' }}>
+        <span style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <Icon name={current.icon} size={14} color="var(--c-accent,#C17A2A)"/>
+          {current.label}
+        </span>
+        <span style={{ color:'#9B6347', fontSize:10, transform:open?'rotate(180deg)':'none', transition:'transform .2s' }}>▼</span>
+      </button>
+      {open && (
+        <div style={{ position:'absolute', top:'calc(100% + 6px)', right:0, background:'var(--c-card,#FFFDF7)', borderRadius:12, boxShadow:'0 8px 32px rgba(58,26,10,0.14)', border:'1px solid var(--c-border,#E0CEAD)', zIndex:50, overflow:'hidden', minWidth:'100%' }}>
+          {SORT_OPTS.map(o => (
+            <button key={o.value} onClick={() => { onChange(o.value); setOpen(false); }}
+              style={{ display:'flex', alignItems:'center', gap:10, width:'100%', padding:'11px 16px', border:'none', background: value===o.value ? 'var(--c-surface,#FBF5E6)' : 'transparent', color: value===o.value ? 'var(--c-accent,#C17A2A)' : 'var(--c-text,#3A2212)', fontWeight: value===o.value ? 700 : 500, fontSize:14, cursor:'pointer', transition:'background .15s', textAlign:'left' }}
+              onMouseEnter={e => { if (value !== o.value) e.currentTarget.style.background = 'var(--c-surface,#FBF5E6)'; }}
+              onMouseLeave={e => { if (value !== o.value) e.currentTarget.style.background = 'transparent'; }}>
+              <Icon name={o.icon} size={14} color={value===o.value ? '#C17A2A' : '#9B6347'}/>
+              {o.label}
+              {value===o.value && <span style={{ marginLeft:'auto', color:'#C17A2A', fontSize:12 }}>✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const CATEGORIES = ["Semua", "Novel", "Bisnis", "Ekonomi", "Politik", "Self-Help", "Sejarah", "Sains", "Filsafat"];
 
@@ -35,11 +79,7 @@ export function CatalogPage({ onNavigate, onBook, initialCategory }) {
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari judul atau pengarang..."
               style={{ width:'100%', boxSizing:'border-box', padding:'12px 14px 12px 42px', borderRadius:10, border:'1.5px solid #E0CEAD', background:'var(--c-card,#FFF)', fontSize:15, color:'var(--c-text,#3A2212)', outline:'none' }}/>
           </div>
-          <select value={sort} onChange={e => setSort(e.target.value)}
-            style={{ padding:'12px 16px', borderRadius:10, border:'1.5px solid #E0CEAD', background:'var(--c-card,#FFF)', fontSize:14, color:'var(--c-text,#3A2212)', cursor:'pointer', outline:'none' }}>
-            <option value="default">Urutan Default</option>
-            <option value="rating">Rating Tertinggi</option>
-          </select>
+          <SortDropdown value={sort} onChange={setSort}/>
         </div>
 
         <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:32 }}>
@@ -78,7 +118,7 @@ export function BookDetailPage({ book, onNavigate, onBook, user }) {
     fetch(`/api/bookings?bookId=${book.id}`)
       .then(r => r.json())
       .then(bookings => {
-        const active = bookings.find(b => ['pending','confirmed','active'].includes(b.status));
+        const active = bookings.find(b => b.status === 'active');
         setActiveBooking(active || null);
       })
       .catch(() => {});

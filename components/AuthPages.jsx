@@ -188,11 +188,12 @@ export function OTPPage({ onNavigate }) {
         </div>
         <h1 style={authTitle}>Verifikasi OTP</h1>
         <p style={{...authSub, marginBottom:28}}>Kode OTP dikirim ke <strong>{email}</strong>. Masukkan 6 digit kode di bawah.</p>
-        <div style={{ display:'flex', gap:10, justifyContent:'center', marginBottom:24 }}>
+        <div className="kp-otp-row">
           {otp.map((d, i) => (
             <input key={i} ref={el => inputRefs.current[i] = el} value={d} maxLength={1}
               onChange={e => handleInput(i, e.target.value)} onKeyDown={e => handleKeyDown(i, e)}
-              style={{ width:52, height:60, textAlign:'center', fontSize:28, fontWeight:700, fontFamily:"'Plus Jakarta Sans',sans-serif", borderRadius:10, border:`2px solid ${d ? '#C17A2A' : '#E0CEAD'}`, background:d ? '#FFF8EE' : '#FFFDF7', color:'#3A2212', outline:'none', transition:'border .2s' }}/>
+              className="kp-otp-input"
+              style={{ borderColor: d ? '#C17A2A' : '#E0CEAD', background: d ? '#FFF8EE' : '#FFFDF7' }}/>
           ))}
         </div>
         {err && <div style={{ background:'#FFF0F0', color:'#B22222', borderRadius:8, padding:'10px 14px', fontSize:13, marginBottom:14, textAlign:'center' }}>{err}</div>}

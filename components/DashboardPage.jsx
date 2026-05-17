@@ -6,22 +6,56 @@ import { Badge, Modal, Input, Btn, Toast, statusBadge } from './UI';
 const CATEGORIES = ["Novel", "Bisnis", "Ekonomi", "Politik", "Self-Help", "Sejarah", "Sains", "Filsafat"];
 const fmtDate = d => new Date(d).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
 
-function BookingCard({ booking: b }) {
+function BookingCard({ booking: b, onCancel }) {
+  const [confirming, setConfirming] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleCancel() {
+    setLoading(true);
+    await onCancel(b.id);
+    setLoading(false);
+    setConfirming(false);
+  }
+
   return (
     <div style={{ background:'var(--c-card,#FFFDF7)', borderRadius:14, padding:'20px 24px', border:'1px solid #E0CEAD', boxShadow:'0 2px 8px rgba(58,26,10,0.06)', display:'flex', gap:18, flexWrap:'wrap', alignItems:'center' }}>
       <div style={{ width:48, height:66, background:b.book?.color||'#6B3A2A', borderRadius:5, flexShrink:0, position:'relative' }}>
         <div style={{ position:'absolute', left:0, top:0, bottom:0, width:7, background:'rgba(0,0,0,0.3)', borderRadius:'4px 0 0 4px' }}/>
       </div>
-      <div style={{ flex:1, minWidth:200 }}>
+      <div style={{ flex:1, minWidth:180 }}>
         <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, color:'var(--c-text,#3A2212)', fontSize:16, marginBottom:2 }}>{b.book?.title}</div>
         <div style={{ color:'#7A5A42', fontSize:13 }}>{b.book?.author} • {b.durationLabel}</div>
         <div style={{ color:'#9B6347', fontSize:12, marginTop:4 }}>
           Ambil: {fmtDate(b.pickupDate)} → Kembali: {fmtDate(b.returnDate)}
         </div>
       </div>
-      <div style={{ textAlign:'right' }}>
-        <div style={{ marginBottom:6 }}>{statusBadge(b.status)}</div>
-        <div style={{ fontSize:11, color:'#9B6347' }}>{b.id.slice(0, 12)}...</div>
+      <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:10 }}>
+        <div>{statusBadge(b.status)}</div>
+        {b.status === 'cancelled' && b.cancelReason && (
+          <div style={{ fontSize:11, color:'#B22222', background:'rgba(178,34,34,0.07)', border:'1px solid rgba(178,34,34,0.2)', borderRadius:8, padding:'5px 10px', maxWidth:220, textAlign:'right', lineHeight:1.4 }}>
+            {b.cancelReason}
+          </div>
+        )}
+        {b.status === 'pending' && (
+          confirming ? (
+            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+              <span style={{ fontSize:12, color:'#7A5A42' }}>Yakin batalkan?</span>
+              <button onClick={handleCancel} disabled={loading}
+                style={{ padding:'5px 12px', borderRadius:8, border:'none', background:'#B22222', color:'#FFF', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+                {loading ? '...' : 'Ya'}
+              </button>
+              <button onClick={() => setConfirming(false)}
+                style={{ padding:'5px 12px', borderRadius:8, border:'1px solid #E0CEAD', background:'transparent', color:'#7A5A42', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+                Tidak
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => setConfirming(true)}
+              style={{ padding:'6px 14px', borderRadius:8, border:'1px solid #E0CEAD', background:'transparent', color:'#B22222', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+              Batalkan
+            </button>
+          )
+        )}
       </div>
     </div>
   );
@@ -31,15 +65,23 @@ export function DashboardPage({ user, onNavigate }) {
   const [tab, setTab] = useState('active');
   const [bookings, setBookings] = useState([]);
 
-  useEffect(() => {
-    fetch('/api/bookings')
-      .then(r => r.json())
-      .then(setBookings)
-      .catch(() => {});
-  }, [user]);
+  function loadBookings() {
+    fetch('/api/bookings').then(r => r.json()).then(setBookings).catch(() => {});
+  }
+
+  useEffect(() => { loadBookings(); }, [user]);
+
+  async function cancelBooking(id) {
+    await fetch(`/api/bookings/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'cancelled' }),
+    });
+    loadBookings();
+  }
 
   const filtered = bookings.filter(b =>
-    tab==='active' ? ['pending','confirmed','active'].includes(b.status) :
+    tab==='active' ? ['pending','active'].includes(b.status) :
     tab==='history' ? ['returned','cancelled'].includes(b.status) : true
   );
 
@@ -60,7 +102,7 @@ export function DashboardPage({ user, onNavigate }) {
         </div>
 
         <div className="kp-stats-grid">
-          {[['bookStack',bookings.length,'Total Booking','#6B3A2A'],['hourglass',bookings.filter(b=>['pending','confirmed','active'].includes(b.status)).length,'Sedang Berjalan','#C17A2A'],['checkCircle',bookings.filter(b=>b.status==='returned').length,'Sudah Dikembalikan','#2E7D52']].map(([icon,val,label,color]) => (
+          {[['hourglass',bookings.filter(b=>b.status==='pending').length,'Menunggu','#C17A2A'],['bookOpen',bookings.filter(b=>b.status==='active').length,'Dipinjam','#6B3A2A'],['checkCircle',bookings.filter(b=>b.status==='returned').length,'Sudah Dikembalikan','#2E7D52']].map(([icon,val,label,color]) => (
             <div key={label} style={{ background:'var(--c-card,#FFFDF7)', borderRadius:14, padding:'20px 22px', border:'1px solid var(--c-border,#E0CEAD)', boxShadow:'0 2px 10px rgba(58,26,10,0.07)' }}>
               <div style={{ width:40, height:40, borderRadius:10, background:'var(--c-surface,#FBF5E6)', display:'flex', alignItems:'center', justifyContent:'center', color, marginBottom:12 }}><Icon name={icon} size={20}/></div>
               <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:28, fontWeight:800, color:'var(--c-text,#3A2212)' }}>{val}</div>
@@ -85,7 +127,7 @@ export function DashboardPage({ user, onNavigate }) {
           </div>
         ) : (
           <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-            {filtered.map(b => <BookingCard key={b.id} booking={b}/>)}
+            {filtered.map(b => <BookingCard key={b.id} booking={b} onCancel={cancelBooking}/>)}
           </div>
         )}
       </div>
@@ -105,12 +147,12 @@ export function AdminPage({ onNavigate }) {
   useEffect(() => { refreshData(); }, []);
 
   async function refreshData() {
-    const [booksRes, bookingsRes] = await Promise.all([
-      fetch('/api/books').then(r => r.json()),
-      fetch('/api/bookings').then(r => r.json()),
-    ]).catch(() => [[], []]);
-    setBooks(booksRes);
-    setBookings(bookingsRes);
+    const [books, bookings] = await Promise.all([
+      fetch('/api/books').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/bookings').then(r => r.ok ? r.json() : []).catch(() => []),
+    ]);
+    setBooks(Array.isArray(books) ? books : []);
+    setBookings(Array.isArray(bookings) ? bookings : []);
   }
 
   function openAdd() { setForm({ title:'', author:'', category:'Novel', pages:'200', year:'2024', desc:'', color:'#6B3A2A' }); setModal('add'); }
@@ -155,7 +197,7 @@ export function AdminPage({ onNavigate }) {
   }
 
   function isBookActive(bookId) {
-    return bookings.some(b => b.bookId === bookId && ['pending','confirmed','active'].includes(b.status));
+    return bookings.some(b => b.bookId === bookId && b.status === 'active');
   }
 
   const f = (k, v) => setForm(p => ({...p, [k]:v}));
@@ -231,14 +273,33 @@ export function AdminPage({ onNavigate }) {
                 <div style={{ flex:1, minWidth:200 }}>
                   <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, color:'var(--c-text,#3A2212)', fontSize:15 }}>{b.book?.title}</div>
                   <div style={{ color:'#7A5A42', fontSize:13 }}>{b.userName} • {b.durationLabel}</div>
-                  <div style={{ color:'#9B6347', fontSize:12, marginTop:2 }}>{b.id.slice(0, 12)}... • {fmtDate(b.createdAt)}</div>
+                  <div style={{ color:'#9B6347', fontSize:12, marginTop:2 }}>
+                    {fmtDate(b.pickupDate)} → {fmtDate(b.returnDate)}
+                  </div>
+                  {b.note && <div style={{ fontSize:12, color:'#7A5A42', marginTop:4, fontStyle:'italic' }}>"{b.note}"</div>}
                 </div>
-                <div style={{ textAlign:'right' }}>
-                  <div style={{ marginBottom:8 }}>{statusBadge(b.status)}</div>
-                  <select value={b.status} onChange={e => updateStatus(b.id, e.target.value)}
-                    style={{ padding:'6px 10px', borderRadius:8, border:'1px solid #E0CEAD', fontSize:13, background:'var(--c-surface,#FBF5E6)', color:'var(--c-text,#3A2212)', cursor:'pointer' }}>
-                    {['pending','confirmed','active','returned','cancelled'].map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:8 }}>
+                  {statusBadge(b.status)}
+                  <div style={{ display:'flex', gap:8, flexWrap:'wrap', justifyContent:'flex-end' }}>
+                    {b.status === 'pending' && (
+                      <>
+                        <button onClick={() => updateStatus(b.id, 'active')}
+                          style={{ padding:'7px 14px', borderRadius:8, border:'none', background:'#2E7D52', color:'#FFF', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+                          ✓ Dipinjam
+                        </button>
+                        <button onClick={() => updateStatus(b.id, 'cancelled')}
+                          style={{ padding:'7px 14px', borderRadius:8, border:'1px solid #E0CEAD', background:'transparent', color:'#B22222', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+                          ✕ Batalkan
+                        </button>
+                      </>
+                    )}
+                    {b.status === 'active' && (
+                      <button onClick={() => updateStatus(b.id, 'returned')}
+                        style={{ padding:'7px 14px', borderRadius:8, border:'none', background:'#6B3A2A', color:'#FFF', fontWeight:700, fontSize:12, cursor:'pointer' }}>
+                        ✓ Selesai Dikembalikan
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

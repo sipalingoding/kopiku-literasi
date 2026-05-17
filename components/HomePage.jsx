@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Icon } from './Icons';
 import { BookCard, SectionHeader } from './UI';
-import { AppData } from '@/lib/data';
+
+const CATEGORIES = ["Novel", "Bisnis", "Ekonomi", "Politik", "Self-Help", "Sejarah", "Sains", "Filsafat"];
 
 const PARTICLES = [
   {x:6,y:18,size:5,delay:0,dur:5,op:.14},{x:88,y:12,size:8,delay:1.2,dur:7,op:.1},
@@ -28,8 +29,7 @@ function FloatCard({ style, children, delay=0 }) {
   );
 }
 
-function VisualPanel({ onAnimDone }) {
-  const books = AppData.getBooks();
+function VisualPanel({ onAnimDone, books }) {
   const [phase, setPhase] = useState('idle');
   const [hov, setHov] = useState(false);
   const [tilt, setTilt] = useState({x:0,y:0});
@@ -217,9 +217,14 @@ function VisualPanel({ onAnimDone }) {
 export function HomePage({ onNavigate, onBook, user }) {
   const [animDone, setAnimDone] = useState(false);
   const [vis, setVis] = useState({});
-  const books = AppData.getBooks();
-  const featured = books.slice(0,4);
-  const categories = AppData.CATEGORIES.filter(c=>c!=='Semua');
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/books').then(r => r.json()).then(setBooks).catch(() => {});
+  }, []);
+
+  const featured = books.slice(0, 4);
+  const categories = CATEGORIES;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -268,7 +273,7 @@ export function HomePage({ onNavigate, onBook, user }) {
                 <Icon name="bookmark" size={22}/>
               </div>
               <div>
-                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, color:'var(--c-text,#2A1008)', fontSize:26, lineHeight:1 }}>{AppData.CATEGORIES.length-1}</div>
+                <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, color:'var(--c-text,#2A1008)', fontSize:26, lineHeight:1 }}>{CATEGORIES.length}</div>
                 <div style={{ color:'#9B6347', fontSize:12, marginTop:2 }}>Kategori</div>
               </div>
             </div>
@@ -292,7 +297,7 @@ export function HomePage({ onNavigate, onBook, user }) {
           </div>
         </div>
 
-        <VisualPanel onAnimDone={() => setAnimDone(true)}/>
+        <VisualPanel onAnimDone={() => setAnimDone(true)} books={books}/>
       </section>
 
       <div className="kp-strip">

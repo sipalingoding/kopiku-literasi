@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Icon } from './Icons';
-import { AppData } from '@/lib/data';
 
 export function Navbar({ user, onNavigate, onLogout }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -154,13 +153,8 @@ export function Navbar({ user, onNavigate, onLogout }) {
 
 export function BookCard({ book, onClick, onBook }) {
   const [hov, setHov] = useState(false);
-  const [activeBooking, setActiveBooking] = useState(null);
 
-  useEffect(() => {
-    setActiveBooking(AppData.getActiveBookingForBook(book.id));
-  }, [book.id]);
-
-  const isBooked = !!activeBooking;
+  const isBooked = !!book.isBooked;
   const fmtShort = d => new Date(d).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
 
   return (
@@ -190,7 +184,7 @@ export function BookCard({ book, onClick, onBook }) {
               <Icon name="clock" size={11} color="#B22222"/> Dipinjam sampai
             </div>
             <div style={{ fontWeight:800, color:'#B22222', fontSize:13, fontFamily:"'Plus Jakarta Sans',sans-serif", marginBottom:8 }}>
-              {fmtShort(activeBooking.returnDate)}
+              {fmtShort(book.activeReturnDate)}
             </div>
             <button disabled style={{ width:'100%', background:'#E8DCC4', color:'#9B6347', border:'none', borderRadius:8, padding:'7px 0', cursor:'not-allowed', fontWeight:600, fontSize:12, opacity:.75 }}>Tidak Tersedia</button>
           </div>
@@ -289,7 +283,7 @@ export function Toast({ msg, type, onClose }) {
 }
 
 export function statusBadge(status) {
-  const map = { pending:['warning','Menunggu'], confirmed:['info','Dikonfirmasi'], active:['success','Aktif'], returned:['default','Dikembalikan'], cancelled:['danger','Dibatalkan'] };
+  const map = { pending:['warning','Menunggu'], active:['success','Dipinjam'], returned:['default','Selesai'], cancelled:['danger','Dibatalkan'] };
   const [type, label] = map[status] || ['default', status];
   return <Badge type={type}>{label}</Badge>;
 }

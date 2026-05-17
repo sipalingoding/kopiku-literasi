@@ -3,15 +3,20 @@ import prisma from '@/lib/prisma';
 
 export async function POST(req) {
   try {
-    const { userId, code } = await req.json();
+    const { email, code } = await req.json();
 
-    if (!userId || !code) {
+    if (!email || !code) {
       return NextResponse.json({ error: 'Data tidak lengkap.' }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return NextResponse.json({ error: 'Email tidak ditemukan.' }, { status: 400 });
     }
 
     const otp = await prisma.otpCode.findFirst({
       where: {
-        userId,
+        userId: user.id,
         code,
         used: false,
         expiresAt: { gt: new Date() },
@@ -23,18 +28,14 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Kode OTP salah atau sudah kadaluarsa.' }, { status: 400 });
     }
 
-    // Tandai OTP sudah digunakan & verifikasi user
     await prisma.$transaction([
       prisma.otpCode.update({ where: { id: otp.id }, data: { used: true } }),
-      prisma.user.update({ where: { id: userId }, data: { verified: true } }),
+      prisma.user.update({ where: { id: user.id }, data: { verified: true } }),
     ]);
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, name: true, email: true, role: true },
+    return NextResponse.json({
+      user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
-
-    return NextResponse.json({ user });
   } catch (err) {
     console.error('[verify-otp]', err);
     return NextResponse.json({ error: 'Terjadi kesalahan server.' }, { status: 500 });

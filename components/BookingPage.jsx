@@ -237,16 +237,16 @@ export function BookingPage({ book, user, onNavigate, onSuccess }) {
         )}
 
         {step===2&&booking&&(
-          <div className="kp-booking-success" style={{...cardStyle}}>
-            <div style={{ width:96, height:96, borderRadius:'50%', background:'rgba(46,125,82,0.12)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px', color:'#2E7D52', border:'2px solid rgba(46,125,82,0.3)' }}>
-              <Icon name="checkCircle" size={48} strokeWidth={2}/>
+          <div className="kp-booking-success">
+            <div style={{ width:80, height:80, borderRadius:'50%', background:'rgba(46,125,82,0.12)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', color:'#2E7D52', border:'2px solid rgba(46,125,82,0.3)' }}>
+              <Icon name="checkCircle" size={40} strokeWidth={2}/>
             </div>
-            <h2 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:30, color:'var(--c-text,#1A0A04)', margin:'0 0 10px', fontWeight:800 }}>Booking Berhasil!</h2>
-            <p style={{ color:'var(--c-text-muted,#7A5A42)', marginBottom:28, fontSize:16, lineHeight:1.6 }}>
+            <h2 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'var(--c-text,#1A0A04)', margin:'0 0 10px', fontWeight:800 }}>Booking Berhasil!</h2>
+            <p style={{ color:'var(--c-text-muted,#7A5A42)', marginBottom:24, fontSize:15, lineHeight:1.6 }}>
               Terima kasih, <strong>{user.name}</strong>!<br/>Jadwal pinjam buku kamu sudah tercatat.
             </p>
 
-            <div className="kp-booking-summary" style={{ background:'var(--c-surface,#FBF5E6)', borderRadius:14, padding:'24px 28px', marginBottom:32, textAlign:'left', border:'1px solid var(--c-border,#E0CEAD)' }}>
+            <div className="kp-booking-summary" style={{ background:'var(--c-surface,#FBF5E6)', borderRadius:14, padding:'20px', marginBottom:28, textAlign:'left', border:'1px solid var(--c-border,#E0CEAD)' }}>
               <div style={{ fontSize:11, color:'var(--c-text-muted,#9B6347)', fontWeight:700, letterSpacing:1.5, textTransform:'uppercase', marginBottom:6 }}>Kode Booking</div>
               <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:24, color:'var(--c-text,#1A0A04)', fontWeight:800, letterSpacing:2, marginBottom:16 }}>{booking.id}</div>
 
@@ -272,7 +272,22 @@ export function BookingPage({ book, user, onNavigate, onSuccess }) {
               </div>
             </div>
 
-            <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap' }}>
+            <div style={{ background:'rgba(193,122,42,0.08)', border:'1px solid rgba(193,122,42,0.25)', borderRadius:12, padding:'16px 20px', marginBottom:24, textAlign:'left' }}>
+              <div style={{ display:'flex', alignItems:'flex-start', gap:12 }}>
+                <div style={{ width:36, height:36, borderRadius:10, background:'rgba(193,122,42,0.15)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--c-accent,#C17A2A)', flexShrink:0, marginTop:2 }}>
+                  <Icon name="mapPin" size={18}/>
+                </div>
+                <div>
+                  <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, color:'var(--c-text,#1A0A04)', fontSize:14, marginBottom:4 }}>Lokasi Pengambilan Buku</div>
+                  <div style={{ fontSize:13, color:'var(--c-text-muted,#7A5A42)', lineHeight:1.6 }}>
+                    Desa Cileungsir, RT.06/RW.03<br/>
+                    Kecamatan Rancah, Kabupaten Ciamis
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="kp-booking-btns">
               <Btn onClick={() => onNavigate('dashboard')} variant="primary">Lihat Dashboard</Btn>
               <Btn onClick={() => onNavigate('catalog')} variant="outline">Cari Buku Lain</Btn>
             </div>

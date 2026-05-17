@@ -22,8 +22,8 @@ export function CatalogPage({ onNavigate, onBook, initialCategory }) {
     .sort((a, b) => sort === 'rating' ? b.rating - a.rating : 0);
 
   return (
-    <div style={{ background:'var(--c-bg,#FFFFFF)', minHeight:'100vh', padding:'40px 40px 64px' }}>
-      <div style={{ maxWidth:1100, margin:'0 auto' }}>
+    <div className="kp-catalog-outer">
+      <div className="kp-catalog-inner">
         <div style={{ marginBottom:32 }}>
           <h1 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:36, color:'var(--c-text,#3A2212)', margin:'0 0 8px', fontWeight:800 }}>Katalog Buku</h1>
           <p style={{ color:'#7A5A42', margin:0, fontSize:16 }}>{filtered.length} buku tersedia</p>
@@ -56,7 +56,7 @@ export function CatalogPage({ onNavigate, onBook, initialCategory }) {
             <div style={{ fontSize:14, marginTop:8 }}>Coba kata kunci atau kategori lain</div>
           </div>
         ) : (
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:24 }}>
+          <div className="kp-catalog-grid">
             {filtered.map(b => <BookCard key={b.id} book={b} onClick={() => onNavigate('detail', b)} onBook={() => onBook(b)}/>)}
           </div>
         )}
@@ -89,14 +89,14 @@ export function BookDetailPage({ book, onNavigate, onBook, user }) {
   const fmtLong = d => new Date(d).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
 
   return (
-    <div style={{ background:'var(--c-bg,#FFFFFF)', minHeight:'100vh', padding:'40px' }}>
-      <div style={{ maxWidth:1000, margin:'0 auto' }}>
+    <div className="kp-detail-outer">
+      <div className="kp-detail-inner">
         <button onClick={() => onNavigate('catalog')} style={{ background:'none', border:'none', color:'#6B3A2A', fontSize:15, cursor:'pointer', marginBottom:24, display:'flex', alignItems:'center', gap:6, fontWeight:600 }}>
           <Icon name="arrowLeft" size={15}/> Kembali ke Katalog
         </button>
 
-        <div style={{ display:'flex', gap:48, flexWrap:'wrap', background:'var(--c-card,#FFFDF7)', borderRadius:20, padding:40, boxShadow:'0 4px 24px rgba(58,26,10,0.10)', border:'1px solid #E0CEAD', marginBottom:40 }}>
-          <div style={{ perspective:800, flexShrink:0 }}>
+        <div className="kp-detail-card">
+          <div className="kp-detail-cover">
             <div style={{ width:180, height:250, position:'relative', transform:'rotateY(-15deg) rotateX(5deg)', transformStyle:'preserve-3d', filter:'drop-shadow(8px 16px 24px rgba(0,0,0,0.3))' }}>
               <div style={{ position:'absolute', left:0, top:0, width:12, height:250, background:'linear-gradient(90deg,#3A1A0A,#5C2E0A)', borderRadius:'3px 0 0 3px' }}/>
               <div style={{ position:'absolute', left:12, top:0, width:168, height:250, background:`linear-gradient(145deg, ${book.color}, ${book.color}dd)`, borderRadius:'0 8px 8px 0', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:10, padding:'20px 14px' }}>
@@ -171,7 +171,7 @@ export function BookDetailPage({ book, onNavigate, onBook, user }) {
         {related.length > 0 && (
           <div>
             <h2 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:24, color:'var(--c-text,#3A2212)', marginBottom:20, fontWeight:800 }}>Buku Sejenis</h2>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:20 }}>
+            <div className="kp-related-grid">
               {related.map(b => <BookCard key={b.id} book={b} onClick={() => onNavigate('detail', b)} onBook={() => onBook(b)}/>)}
             </div>
           </div>

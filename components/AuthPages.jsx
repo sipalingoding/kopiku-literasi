@@ -5,7 +5,7 @@ import { Icon } from './Icons';
 import { Input, Btn } from './UI';
 
 const authWrap = { minHeight:'calc(100vh - 64px)', background:'var(--c-bg,#FBF5E6)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 };
-const authCard = { background:'#FFFDF7', borderRadius:20, padding:'40px 36px', width:'100%', maxWidth:460, boxShadow:'0 8px 40px rgba(58,26,10,0.12)', border:'1px solid #E0CEAD' };
+const authCard = { background:'#FFFDF7', borderRadius:20, width:'100%', maxWidth:460, boxShadow:'0 8px 40px rgba(58,26,10,0.12)', border:'1px solid #E0CEAD' };
 const authTitle = { fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#3A2212', fontSize:28, fontWeight:800, textAlign:'center', margin:'0 0 8px' };
 const authSub = { color:'#7A5A42', textAlign:'center', margin:'0 0 24px', fontSize:15 };
 
@@ -43,7 +43,7 @@ export function LoginPage({ onNavigate }) {
 
   return (
     <div style={authWrap}>
-      <div style={authCard}>
+      <div style={authCard} className="kp-auth-card">
         <BookLogo/>
         <h1 style={authTitle}>Selamat Datang</h1>
         <p style={authSub}>Masuk ke akun <strong>Kopiku Literasi</strong> Anda</p>
@@ -106,7 +106,7 @@ export function RegisterPage({ onNavigate }) {
 
   return (
     <div style={authWrap}>
-      <div style={authCard}>
+      <div style={authCard} className="kp-auth-card">
         <BookLogo/>
         <h1 style={authTitle}>Buat Akun</h1>
         <p style={authSub}>Bergabung dengan komunitas pembaca <strong>Kopiku Literasi</strong></p>
@@ -182,7 +182,7 @@ export function OTPPage({ onNavigate }) {
 
   return (
     <div style={authWrap}>
-      <div style={{...authCard, maxWidth:420}}>
+      <div style={{...authCard, maxWidth:420}} className="kp-auth-card">
         <div style={{ textAlign:'center', marginBottom:8, color:'var(--c-accent,#C17A2A)' }}>
           <Icon name="mailOpen" size={48}/>
         </div>

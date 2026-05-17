@@ -126,21 +126,21 @@ export function BookingPage({ book, user, onNavigate, onSuccess }) {
   const cardStyle = { background:'var(--c-card,#FFF)', borderRadius:16, padding:28, border:'1px solid var(--c-border,#E0CEAD)', boxShadow:'0 2px 12px rgba(58,26,10,0.07)' };
 
   return (
-    <div style={{ background:'var(--c-bg,#FFF)', minHeight:'100vh', padding:'40px 20px' }}>
+    <div className="kp-page">
       <div style={{ maxWidth:880, margin:'0 auto' }}>
         <button onClick={() => step===1 ? onNavigate('detail',book) : onNavigate('home')}
           style={{ background:'none', border:'none', color:'var(--c-primary,#6B3A2A)', fontSize:15, cursor:'pointer', marginBottom:24, fontWeight:600, display:'flex', alignItems:'center', gap:6 }}>
           <Icon name="arrowLeft" size={15}/> {step===1?'Kembali ke Buku':'Kembali ke Beranda'}
         </button>
 
-        <div style={{ display:'flex', alignItems:'center', marginBottom:36 }}>
+        <div className="kp-booking-steps">
           {['Detail Booking','Selesai'].map((s,i) => (
             <span key={s} style={{ display:'contents' }}>
               <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                 <div style={{ width:32, height:32, borderRadius:'50%', background:step>i?'var(--c-primary,#6B3A2A)':step===i+1?'var(--c-accent,#C17A2A)':'var(--c-border,#E0CEAD)', display:'flex', alignItems:'center', justifyContent:'center', color:step>=i+1?'#FFF':'#9B6347', fontWeight:700, fontSize:14, transition:'all .3s' }}>
                   {step>i+1 ? <Icon name="check" size={14} color="#FFF"/> : i+1}
                 </div>
-                <span style={{ fontSize:13, fontWeight:600, color:step===i+1?'var(--c-text,#1A0A04)':'var(--c-text-muted,#9B6347)' }}>{s}</span>
+                <span className="kp-booking-step-label" style={{ color:step===i+1?'var(--c-text,#1A0A04)':'var(--c-text-muted,#9B6347)' }}>{s}</span>
               </div>
               {i<1 && <div style={{ flex:1, height:2, background:step>i+1?'var(--c-primary,#6B3A2A)':'var(--c-border,#E0CEAD)', margin:'0 14px', transition:'background .3s' }}/>}
             </span>
@@ -237,7 +237,7 @@ export function BookingPage({ book, user, onNavigate, onSuccess }) {
         )}
 
         {step===2&&booking&&(
-          <div style={{...cardStyle, textAlign:'center', padding:56}}>
+          <div className="kp-booking-success" style={{...cardStyle}}>
             <div style={{ width:96, height:96, borderRadius:'50%', background:'rgba(46,125,82,0.12)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 24px', color:'#2E7D52', border:'2px solid rgba(46,125,82,0.3)' }}>
               <Icon name="checkCircle" size={48} strokeWidth={2}/>
             </div>
@@ -246,7 +246,7 @@ export function BookingPage({ book, user, onNavigate, onSuccess }) {
               Terima kasih, <strong>{user.name}</strong>!<br/>Jadwal pinjam buku kamu sudah tercatat.
             </p>
 
-            <div style={{ background:'var(--c-surface,#FBF5E6)', borderRadius:14, padding:'24px 28px', display:'inline-block', marginBottom:32, textAlign:'left', border:'1px solid var(--c-border,#E0CEAD)', minWidth:320 }}>
+            <div className="kp-booking-summary" style={{ background:'var(--c-surface,#FBF5E6)', borderRadius:14, padding:'24px 28px', marginBottom:32, textAlign:'left', border:'1px solid var(--c-border,#E0CEAD)' }}>
               <div style={{ fontSize:11, color:'var(--c-text-muted,#9B6347)', fontWeight:700, letterSpacing:1.5, textTransform:'uppercase', marginBottom:6 }}>Kode Booking</div>
               <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:24, color:'var(--c-text,#1A0A04)', fontWeight:800, letterSpacing:2, marginBottom:16 }}>{booking.id}</div>
 

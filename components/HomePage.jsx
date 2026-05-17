@@ -77,7 +77,7 @@ function VisualPanel({ onAnimDone }) {
     : 'rotateX(6deg)';
 
   return (
-    <div style={{ flex:'0 0 46%', position:'relative', height:'calc(100vh - 160px)', maxHeight:680, minHeight:480, minWidth:320 }}>
+    <div className="kp-hero-visual">
       <div style={{ position:'absolute', inset:0, borderRadius:24, overflow:'hidden', background:'#2A1008', boxShadow:'0 32px 80px rgba(42,16,8,0.22), 0 8px 24px rgba(42,16,8,0.12)' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse 90% 70% at 50% 25%, #7B3520 0%, #4A1E08 55%, #1E0A02 100%)' }}/>
         <div style={{ position:'absolute', top:'15%', left:'50%', transform:'translateX(-50%)', width:260, height:260, background:'radial-gradient(circle, rgba(212,168,67,0.2) 0%, transparent 70%)', borderRadius:'50%', pointerEvents:'none', animation:phase==='done'?'glowPulse 4s ease-in-out infinite':'none' }}/>
@@ -232,12 +232,12 @@ export function HomePage({ onNavigate, onBook, user }) {
 
   return (
     <div style={{ background:'var(--c-bg,#FFFFFF)', minHeight:'100vh', overflowX:'hidden' }}>
-      <section style={{ display:'flex', alignItems:'center', minHeight:'100vh', padding:'68px 72px 60px', gap:56, position:'relative', overflow:'hidden' }}>
+      <section className="kp-hero">
         <div style={{ position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden' }}>
           {PARTICLES.map((p,i) => <Particle key={i} {...p}/>)}
         </div>
 
-        <div style={{ flex:'1 1 420px', display:'flex', flexDirection:'column', justifyContent:'center', position:'relative', zIndex:2 }}>
+        <div className="kp-hero-text">
           <div style={{ display:'inline-flex', alignItems:'center', gap:10, marginBottom:22, fontSize:12, color:'var(--c-accent,#C17A2A)', fontWeight:700, letterSpacing:2, textTransform:'uppercase', padding:'7px 16px', background:'rgba(193,122,42,0.1)', borderRadius:30, border:'1px solid rgba(193,122,42,0.25)', width:'fit-content' }}>
             <Icon name="feather" size={14}/> Perpustakaan Pribadi
           </div>
@@ -252,7 +252,7 @@ export function HomePage({ onNavigate, onBook, user }) {
             Perpustakaan pribadi dengan koleksi buku pilihan. Pinjam <strong>gratis</strong>, baca, dan kembalikan tepat waktu — semudah menyeduh kopi pagi.
           </p>
 
-          <div style={{ display:'flex', alignItems:'center', gap:32, marginBottom:40 }}>
+          <div className="kp-hero-stats">
             <div style={{ display:'flex', alignItems:'center', gap:14 }}>
               <div style={{ width:52, height:52, borderRadius:14, background:'var(--c-surface,#FBF5E6)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--c-primary,#6B3A2A)', border:'1px solid var(--c-border,#E8D8C0)' }}>
                 <Icon name="bookStack" size={22}/>
@@ -274,7 +274,7 @@ export function HomePage({ onNavigate, onBook, user }) {
             </div>
           </div>
 
-          <div style={{ display:'flex', gap:14, flexWrap:'wrap' }}>
+          <div className="kp-hero-cta">
             <button onClick={() => onNavigate('catalog')}
               style={{ background:'var(--c-primary,#6B3A2A)', color:'#FBF5E6', border:'none', borderRadius:50, padding:'14px 32px', cursor:'pointer', fontWeight:700, fontSize:15, transition:'all .3s', boxShadow:'0 4px 20px rgba(107,58,42,0.28)' }}
               onMouseEnter={e=>{ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 28px rgba(107,58,42,0.4)'; }}
@@ -295,7 +295,7 @@ export function HomePage({ onNavigate, onBook, user }) {
         <VisualPanel onAnimDone={() => setAnimDone(true)}/>
       </section>
 
-      <div style={{ borderTop:'1px solid var(--c-border,#E0CEAD)', borderBottom:'1px solid var(--c-border,#E0CEAD)', padding:'28px 72px', display:'flex', gap:0, alignItems:'center', background:'var(--c-surface,#FFFDF7)', flexWrap:'wrap' }}>
+      <div className="kp-strip">
         {[['bookOpen','Koleksi Buku Pilihan','Diseleksi dengan teliti untuk pengalaman baca terbaik'],['calendar','Booking Mudah & Gratis','Atur jadwal pinjam dengan kalender, tanpa biaya peminjaman']].map(([icon,title,desc],i) => (
           <span key={title} style={{ display:'contents' }}>
             {i>0&&<div style={{ width:1, height:48, background:'var(--c-border,#E0CEAD)', margin:'0 48px' }}/>}
@@ -312,7 +312,7 @@ export function HomePage({ onNavigate, onBook, user }) {
         ))}
       </div>
 
-      <section data-section="cats" style={{ padding:'72px 72px', maxWidth:1200, margin:'0 auto' }}>
+      <section data-section="cats" className="kp-section">
         <SectionHeader title="Jelajahi Kategori" sub="Temukan buku berdasarkan minat membacamu"/>
         <div style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
           {categories.map((cat,i) => {
@@ -329,7 +329,7 @@ export function HomePage({ onNavigate, onBook, user }) {
         </div>
       </section>
 
-      <section data-section="featured" style={{ padding:'0 72px 80px', maxWidth:1200, margin:'0 auto' }}>
+      <section data-section="featured" className="kp-section-featured">
         <SectionHeader title="Koleksi Unggulan" sub="Buku-buku pilihan yang paling banyak diminati"/>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))', gap:24 }}>
           {featured.map((b,i) => (
@@ -348,7 +348,7 @@ export function HomePage({ onNavigate, onBook, user }) {
         </div>
       </section>
 
-      <section data-section="how" style={{ background:'linear-gradient(150deg,#2A1008,#4A2010,#6B3A2A)', padding:'80px 72px', position:'relative', overflow:'hidden' }}>
+      <section data-section="how" className="kp-section-dark">
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse 60% 80% at 50% 50%,rgba(193,122,42,.08) 0%,transparent 70%)', pointerEvents:'none' }}/>
         <SectionHeader title="Cara Kerja" sub="Mudah dan cepat, seperti menyeduh kopi pagi" dark/>
         <div style={{ display:'flex', gap:40, justifyContent:'center', flexWrap:'wrap', maxWidth:960, margin:'0 auto', position:'relative' }}>
@@ -366,7 +366,7 @@ export function HomePage({ onNavigate, onBook, user }) {
         </div>
       </section>
 
-      <footer style={{ background:'#1E0C04', padding:'36px 72px', textAlign:'center', color:'rgba(251,245,230,.4)', fontSize:13, letterSpacing:.3 }}>
+      <footer className="kp-footer">
         © 2025 Kopiku Literasi — Perpustakaan Pribadi
       </footer>
     </div>

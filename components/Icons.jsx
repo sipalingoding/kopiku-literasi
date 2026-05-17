@@ -26,6 +26,7 @@ const ICON_PATHS = {
   check: <g><path d="M5 12l5 5L20 7" strokeLinecap="round" strokeLinejoin="round"/></g>,
   checkCircle: <g><circle cx="12" cy="12" r="9" strokeLinejoin="round"/><path d="M8 12l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></g>,
   close: <g><path d="M6 6l12 12M18 6L6 18" strokeLinecap="round"/></g>,
+  menu: <g><path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round"/></g>,
   chevronDown: <g><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round"/></g>,
   arrowLeft: <g><path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round"/></g>,
   arrowRight: <g><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></g>,

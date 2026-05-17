@@ -4,7 +4,8 @@ import { Icon } from './Icons';
 import { AppData } from '@/lib/data';
 
 export function Navbar({ user, onNavigate, onLogout }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const isAdmin = user && user.role === 'admin';
@@ -16,74 +17,138 @@ export function Navbar({ user, onNavigate, onLogout }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
   function toggleDark() {
     const dark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('kopiku_dark', dark ? '1' : '0');
     setIsDark(dark);
   }
 
+  function go(page) { onNavigate(page); setMobileOpen(false); setDropdownOpen(false); }
+  function logout() { onLogout(); setMobileOpen(false); setDropdownOpen(false); }
+
+  const darkBtn = (
+    <button onClick={toggleDark} title="Ganti tema"
+      style={{ width:38, height:38, borderRadius:'50%', background:'rgba(107,58,42,0.08)', border:'1px solid rgba(107,58,42,0.18)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--c-text,#1A0A04)', transition:'all .2s', flexShrink:0 }}
+      onMouseEnter={e=>e.currentTarget.style.background='rgba(107,58,42,0.16)'}
+      onMouseLeave={e=>e.currentTarget.style.background='rgba(107,58,42,0.08)'}>
+      <Icon name={isDark ? 'sun' : 'moon'} size={17}/>
+    </button>
+  );
+
   return (
-    <nav style={{
-      padding: '0 56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      height: 68, position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      background: scrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(16px)' : 'none',
-      WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
-      borderBottom: scrolled ? '1px solid #F0E6D0' : 'none',
-      transition: 'all 0.3s ease',
-    }}>
-      <div style={{ display:'flex', alignItems:'center', gap:9, cursor:'pointer', flexShrink:0 }} onClick={() => onNavigate('home')}>
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-          <rect x="3" y="4" width="18" height="25" rx="3" fill="#E8C07A"/>
-          <rect x="6" y="7" width="12" height="19" rx="2" fill="#FFFDF7"/>
-          <rect x="8" y="11" width="8" height="1.5" rx=".75" fill="#C17A2A"/>
-          <rect x="8" y="15" width="6" height="1.5" rx=".75" fill="#C17A2A"/>
-          <rect x="8" y="19" width="7" height="1.5" rx=".75" fill="#C17A2A"/>
-          <rect x="21" y="5" width="8" height="23" rx="2" fill="#9B6347" opacity=".6"/>
-        </svg>
-        <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#3A2212', fontSize:18, fontWeight:700, letterSpacing:.3 }}>Kopiku Literasi</span>
-      </div>
+    <>
+      <nav style={{
+        padding:'0 56px', display:'flex', alignItems:'center', justifyContent:'space-between',
+        height:68, position:'fixed', top:0, left:0, right:0, zIndex:100,
+        background: scrolled || mobileOpen ? 'rgba(255,255,255,0.97)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled || mobileOpen ? '1px solid #F0E6D0' : 'none',
+        transition:'background 0.3s ease, border 0.3s ease',
+      }} className="kopiku-nav">
 
-      <div style={{ position:'absolute', left:'50%', transform:'translateX(-50%)', display:'flex', gap:32, alignItems:'center' }}>
-        {[['home','Home'],['catalog','Katalog'],['about','Tentang']].map(([p,l]) => (
-          <button key={p} className="nav-link" onClick={() => onNavigate(p)}>
-            <span className="dot"/>{l}
-          </button>
-        ))}
-      </div>
+        {/* Logo */}
+        <div style={{ display:'flex', alignItems:'center', gap:9, cursor:'pointer', flexShrink:0 }} onClick={() => go('home')}>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="3" y="4" width="18" height="25" rx="3" fill="#E8C07A"/>
+            <rect x="6" y="7" width="12" height="19" rx="2" fill="#FFFDF7"/>
+            <rect x="8" y="11" width="8" height="1.5" rx=".75" fill="#C17A2A"/>
+            <rect x="8" y="15" width="6" height="1.5" rx=".75" fill="#C17A2A"/>
+            <rect x="8" y="19" width="7" height="1.5" rx=".75" fill="#C17A2A"/>
+            <rect x="21" y="5" width="8" height="23" rx="2" fill="#9B6347" opacity=".6"/>
+          </svg>
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'var(--c-text,#3A2212)', fontSize:18, fontWeight:700, letterSpacing:.3 }}>Kopiku Literasi</span>
+        </div>
 
-      <div style={{ display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
-        <button onClick={toggleDark} title="Ganti tema"
-          style={{ width:38, height:38, borderRadius:'50%', background:'rgba(107,58,42,0.08)', border:'1px solid rgba(107,58,42,0.18)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--c-text,#1A0A04)', transition:'all .2s' }}
-          onMouseEnter={e=>e.currentTarget.style.background='rgba(107,58,42,0.16)'}
-          onMouseLeave={e=>e.currentTarget.style.background='rgba(107,58,42,0.08)'}>
-          <Icon name={isDark ? 'sun' : 'moon'} size={17}/>
-        </button>
-        {user ? (
-          <div style={{ position:'relative' }}>
-            <button className="avatar-btn" onClick={() => setMenuOpen(!menuOpen)}>
-              <span style={{ width:28, height:28, borderRadius:'50%', background:'linear-gradient(135deg,#C17A2A,#8B4513)', display:'flex', alignItems:'center', justifyContent:'center', color:'#FFF', fontWeight:800, fontSize:12, flexShrink:0 }}>{user.name[0].toUpperCase()}</span>
-              {user.name.split(' ')[0]}
-              <span style={{ fontSize:9, color:'#9B6347', transform:menuOpen?'rotate(180deg)':'none', transition:'transform .2s' }}>▾</span>
+        {/* Desktop center links */}
+        <div className="nav-center-links">
+          {[['home','Home'],['catalog','Katalog'],['about','Tentang']].map(([p,l]) => (
+            <button key={p} className="nav-link" onClick={() => go(p)}>
+              <span className="dot"/>{l}
             </button>
-            {menuOpen && (
-              <div style={{ position:'absolute', right:0, top:44, background:'#FFFDF7', borderRadius:14, boxShadow:'0 12px 40px rgba(58,26,10,0.15)', minWidth:190, overflow:'hidden', border:'1px solid #E8D8C0' }}>
-                <div style={{ padding:'12px 18px 8px', borderBottom:'1px solid #F0E6D0' }}>
-                  <div style={{ fontWeight:700, color:'#3A2212', fontSize:14 }}>{user.name}</div>
-                  <div style={{ color:'#9B6347', fontSize:12 }}>{user.email}</div>
-                </div>
-                <button className="dropdown-item" onClick={() => { onNavigate('dashboard'); setMenuOpen(false); }} style={{ display:'flex', alignItems:'center', gap:10 }}><Icon name="layers" size={15}/> Dashboard Saya</button>
-                {isAdmin && <button className="dropdown-item" onClick={() => { onNavigate('admin'); setMenuOpen(false); }} style={{ display:'flex', alignItems:'center', gap:10 }}><Icon name="settings" size={15}/> Panel Admin</button>}
-                <div style={{ borderTop:'1px solid #F0E6D0' }}/>
-                <button className="dropdown-item" onClick={() => { onLogout(); setMenuOpen(false); }} style={{ color:'#B22222', display:'flex', alignItems:'center', gap:10 }}><Icon name="logout" size={15}/> Keluar</button>
+          ))}
+        </div>
+
+        {/* Right side */}
+        <div style={{ display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
+          {darkBtn}
+
+          {/* Desktop auth */}
+          <div className="nav-desktop-auth">
+            {user ? (
+              <div style={{ position:'relative' }}>
+                <button className="avatar-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                  <span style={{ width:28, height:28, borderRadius:'50%', background:'linear-gradient(135deg,#C17A2A,#8B4513)', display:'flex', alignItems:'center', justifyContent:'center', color:'#FFF', fontWeight:800, fontSize:12, flexShrink:0 }}>{user.name[0].toUpperCase()}</span>
+                  {user.name.split(' ')[0]}
+                  <span style={{ fontSize:9, color:'#9B6347', transform:dropdownOpen?'rotate(180deg)':'none', transition:'transform .2s' }}>▾</span>
+                </button>
+                {dropdownOpen && (
+                  <div style={{ position:'absolute', right:0, top:44, background:'#FFFDF7', borderRadius:14, boxShadow:'0 12px 40px rgba(58,26,10,0.15)', minWidth:190, overflow:'hidden', border:'1px solid #E8D8C0', zIndex:200 }}>
+                    <div style={{ padding:'12px 18px 8px', borderBottom:'1px solid #F0E6D0' }}>
+                      <div style={{ fontWeight:700, color:'#3A2212', fontSize:14 }}>{user.name}</div>
+                      <div style={{ color:'#9B6347', fontSize:12 }}>{user.email}</div>
+                    </div>
+                    <button className="dropdown-item" onClick={() => go('dashboard')} style={{ display:'flex', alignItems:'center', gap:10 }}><Icon name="layers" size={15}/> Dashboard Saya</button>
+                    {isAdmin && <button className="dropdown-item" onClick={() => go('admin')} style={{ display:'flex', alignItems:'center', gap:10 }}><Icon name="settings" size={15}/> Panel Admin</button>}
+                    <div style={{ borderTop:'1px solid #F0E6D0' }}/>
+                    <button className="dropdown-item" onClick={logout} style={{ color:'#B22222', display:'flex', alignItems:'center', gap:10 }}><Icon name="logout" size={15}/> Keluar</button>
+                  </div>
+                )}
               </div>
+            ) : (
+              <button className="masuk-btn" onClick={() => go('login')} style={{ display:'inline-flex', alignItems:'center', gap:6 }}>Masuk <Icon name="arrowRight" size={13}/></button>
             )}
           </div>
-        ) : (
-          <button className="masuk-btn" onClick={() => onNavigate('login')} style={{ display:'inline-flex', alignItems:'center', gap:6 }}>Masuk <Icon name="arrowRight" size={13}/></button>
-        )}
-      </div>
-    </nav>
+
+          {/* Mobile hamburger */}
+          <button className="nav-hamburger" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
+            <Icon name={mobileOpen ? 'close' : 'menu'} size={20}/>
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="nav-mobile-menu">
+          {user && (
+            <>
+              <div className="nav-mobile-user">
+                <div className="nav-mobile-user-name">{user.name}</div>
+                <div className="nav-mobile-user-email">{user.email}</div>
+              </div>
+              <div className="nav-mobile-divider"/>
+            </>
+          )}
+          {[['home','Home','home'],['catalog','Katalog','bookStack'],['about','Tentang','scroll']].map(([p,l,icon]) => (
+            <button key={p} className="nav-mobile-link" onClick={() => go(p)}>
+              <Icon name={icon} size={17}/> {l}
+            </button>
+          ))}
+          {user ? (
+            <>
+              <div className="nav-mobile-divider"/>
+              <button className="nav-mobile-link" onClick={() => go('dashboard')}><Icon name="layers" size={17}/> Dashboard Saya</button>
+              {isAdmin && <button className="nav-mobile-link" onClick={() => go('admin')}><Icon name="settings" size={17}/> Panel Admin</button>}
+              <div className="nav-mobile-divider"/>
+              <button className="nav-mobile-link danger" onClick={logout}><Icon name="logout" size={17}/> Keluar</button>
+            </>
+          ) : (
+            <>
+              <div className="nav-mobile-divider"/>
+              <button className="nav-mobile-link" onClick={() => go('login')} style={{ color:'#C17A2A', fontWeight:700 }}>
+                <Icon name="arrowRight" size={17}/> Masuk ke Akun
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -115,36 +180,33 @@ export function BookCard({ book, onClick, onBook }) {
         )}
       </div>
       <div style={{ padding:'12px 14px' }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6 }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 }}>
           <span style={{ background:'#F0E6D0', color:'#6B3A2A', borderRadius:10, padding:'2px 10px', fontSize:11, fontWeight:600 }}>{book.category}</span>
           <span style={{ color:'#C17A2A', fontSize:12, display:'flex', alignItems:'center', gap:3 }}>★ {book.rating}</span>
         </div>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:10, gap:8 }}>
-          {isBooked ? (
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:11, color:'#B22222', display:'flex', alignItems:'center', gap:4, marginBottom:2 }}>
-                <Icon name="clock" size={11} color="#B22222"/> Dipinjam sampai
-              </div>
-              <div style={{ fontWeight:800, color:'#B22222', fontSize:13, fontFamily:"'Plus Jakarta Sans',sans-serif" }}>
-                {fmtShort(activeBooking.returnDate)}
-              </div>
+        {isBooked ? (
+          <div style={{ marginTop:4 }}>
+            <div style={{ fontSize:11, color:'#B22222', display:'flex', alignItems:'center', gap:4, marginBottom:2 }}>
+              <Icon name="clock" size={11} color="#B22222"/> Dipinjam sampai
             </div>
-          ) : (
-            <div style={{ display:'flex', alignItems:'center', gap:6, color:'#2E7D52' }}>
+            <div style={{ fontWeight:800, color:'#B22222', fontSize:13, fontFamily:"'Plus Jakarta Sans',sans-serif", marginBottom:8 }}>
+              {fmtShort(activeBooking.returnDate)}
+            </div>
+            <button disabled style={{ width:'100%', background:'#E8DCC4', color:'#9B6347', border:'none', borderRadius:8, padding:'7px 0', cursor:'not-allowed', fontWeight:600, fontSize:12, opacity:.75 }}>Tidak Tersedia</button>
+          </div>
+        ) : (
+          <div style={{ display:'flex', flexDirection:'column', gap:8, marginTop:6 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:5, color:'#2E7D52' }}>
               <Icon name="checkCircle" size={14} color="#2E7D52"/>
               <span style={{ fontWeight:700, fontSize:13 }}>Tersedia</span>
             </div>
-          )}
-          {isBooked ? (
-            <button disabled style={{ background:'#E8DCC4', color:'#9B6347', border:'none', borderRadius:8, padding:'7px 12px', cursor:'not-allowed', fontWeight:600, fontSize:12, opacity:.75, flexShrink:0 }}>Tidak Tersedia</button>
-          ) : (
             <button onClick={e => { e.stopPropagation(); onBook(book); }}
-              style={{ background:'var(--c-accent,#C17A2A)', color:'#FFF', border:'none', borderRadius:8, padding:'7px 14px', cursor:'pointer', fontWeight:600, fontSize:13, transition:'opacity .2s', display:'flex', alignItems:'center', gap:5, flexShrink:0 }}
+              style={{ width:'100%', background:'var(--c-accent,#C17A2A)', color:'#FFF', border:'none', borderRadius:8, padding:'7px 0', cursor:'pointer', fontWeight:600, fontSize:12, transition:'opacity .2s', display:'flex', alignItems:'center', justifyContent:'center', gap:4 }}
               onMouseEnter={e=>e.target.style.opacity='.8'} onMouseLeave={e=>e.target.style.opacity='1'}>
-              <Icon name="calendar" size={13} color="#FFF"/> Booking
+              <Icon name="calendar" size={12} color="#FFF"/> Booking
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

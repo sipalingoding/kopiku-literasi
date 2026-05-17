@@ -44,8 +44,8 @@ export function DashboardPage({ user, onNavigate }) {
   );
 
   return (
-    <div style={{ background:'var(--c-bg,#FFFFFF)', minHeight:'100vh', padding:'40px' }}>
-      <div style={{ maxWidth:900, margin:'0 auto' }}>
+    <div className="kp-page">
+      <div className="kp-page-inner">
         <div style={{ display:'flex', gap:20, alignItems:'center', marginBottom:36, flexWrap:'wrap' }}>
           <div style={{ width:64, height:64, borderRadius:'50%', background:'var(--c-primary,#6B3A2A)', display:'flex', alignItems:'center', justifyContent:'center', color:'#E8C07A', fontSize:26, fontWeight:700, flexShrink:0 }}>
             {user.name[0].toUpperCase()}
@@ -59,7 +59,7 @@ export function DashboardPage({ user, onNavigate }) {
           </div>
         </div>
 
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))', gap:16, marginBottom:36 }}>
+        <div className="kp-stats-grid">
           {[['bookStack',bookings.length,'Total Booking','#6B3A2A'],['hourglass',bookings.filter(b=>['pending','confirmed','active'].includes(b.status)).length,'Sedang Berjalan','#C17A2A'],['checkCircle',bookings.filter(b=>b.status==='returned').length,'Sudah Dikembalikan','#2E7D52']].map(([icon,val,label,color]) => (
             <div key={label} style={{ background:'var(--c-card,#FFFDF7)', borderRadius:14, padding:'20px 22px', border:'1px solid var(--c-border,#E0CEAD)', boxShadow:'0 2px 10px rgba(58,26,10,0.07)' }}>
               <div style={{ width:40, height:40, borderRadius:10, background:'var(--c-surface,#FBF5E6)', display:'flex', alignItems:'center', justifyContent:'center', color, marginBottom:12 }}><Icon name={icon} size={20}/></div>
@@ -161,8 +161,8 @@ export function AdminPage({ onNavigate }) {
   const f = (k, v) => setForm(p => ({...p, [k]:v}));
 
   return (
-    <div style={{ background:'var(--c-bg,#FFFFFF)', minHeight:'100vh', padding:'40px' }}>
-      <div style={{ maxWidth:1100, margin:'0 auto' }}>
+    <div className="kp-page">
+      <div className="kp-page-inner-wide">
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:32, flexWrap:'wrap', gap:12 }}>
           <div>
             <h1 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:30, color:'var(--c-text,#3A2212)', margin:'0 0 4px', fontWeight:800 }}>Panel Admin</h1>
@@ -184,8 +184,8 @@ export function AdminPage({ onNavigate }) {
             <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:16 }}>
               <Btn onClick={openAdd} variant="accent">+ Tambah Buku</Btn>
             </div>
-            <div style={{ background:'var(--c-card,#FFFDF7)', borderRadius:14, border:'1px solid #E0CEAD', overflow:'hidden' }}>
-              <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <div className="kp-table-scroll" style={{ borderRadius:14, border:'1px solid #E0CEAD' }}>
+              <table style={{ width:'100%', borderCollapse:'collapse', background:'var(--c-card,#FFFDF7)', minWidth:560 }}>
                 <thead>
                   <tr style={{ background:'#F0E6D0' }}>
                     {['Buku','Kategori','Status','Rating','Aksi'].map(h => (
@@ -247,7 +247,7 @@ export function AdminPage({ onNavigate }) {
       </div>
 
       <Modal open={!!modal} onClose={() => setModal(null)} title={modal==='add'?'Tambah Buku':'Edit Buku'} wide>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0 20px' }}>
+        <div className="kp-modal-grid">
           <Input label="Judul Buku" value={form.title} onChange={v => f('title', v)} placeholder="Judul buku"/>
           <Input label="Pengarang" value={form.author} onChange={v => f('author', v)} placeholder="Nama pengarang"/>
           <div style={{ marginBottom:16 }}>
@@ -286,7 +286,7 @@ export function AdminPage({ onNavigate }) {
 export function AboutPage({ onNavigate }) {
   return (
     <div style={{ background:'var(--c-bg,#FFFFFF)', minHeight:'100vh' }}>
-      <div style={{ maxWidth:800, margin:'0 auto', padding:'60px 40px' }}>
+      <div className="kp-about-inner">
         <div style={{ textAlign:'center', marginBottom:48 }}>
           <svg width="72" height="72" viewBox="0 0 72 72" fill="none" style={{ marginBottom:16 }}>
             <rect x="8" y="10" width="42" height="54" rx="4" fill="#E8C07A"/>
